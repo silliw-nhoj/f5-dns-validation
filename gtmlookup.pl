@@ -216,6 +216,10 @@ sub dig_address {
 
 sub showResults {
     (@ip) = @_;
+    my $datacenter = "undefined";
+    if ($ips{$ipRes[0]}{datacenter}) {
+        $datacenter = $ips{$ipRes[0]}{datacenter}
+    }
     if ( scalar @ipRes >= 2) {
         # multiple answer IPs in response
         if ($verboseLvl >= 1) {
@@ -238,15 +242,15 @@ sub showResults {
             # not round-robin method - show answer IP responses
             if (grep {$_ eq $ipRes[0]} @ip){
                 if ($verboseLvl >= 1 ) {
-                    print "$name - $aType - Datacenter: $ips{$ipRes[0]}{datacenter} - Answer: @ipRes - Good Answer - LB Mode: $wips{$aType}{wips}{$name}{mainLBMode} ** NOT ROUND-ROBIN **\n";                    
+                    print "$name - $aType - Datacenter: $datacenter - Answer: @ipRes - Good Answer - LB Mode: $wips{$aType}{wips}{$name}{mainLBMode} ** NOT ROUND-ROBIN **\n";                    
                 } else {
-                    print "$name - $aType - Datacenter: $ips{$ipRes[0]}{datacenter} - Answer: @ipRes - Good-answer - $wips{$aType}{wips}{$name}{mainLBMode}\n";
+                    print "$name - $aType - Datacenter: $datacenter - Answer: @ipRes - Good-answer - $wips{$aType}{wips}{$name}{mainLBMode}\n";
                 }
             } else {
                 if ($verboseLvl >= 1 ) {
-                    print "$name - $aType - Datacenter: $ips{$ipRes[0]}{datacenter} - Answer: @ipRes - LB Mode: $wips{$aType}{wips}{$name}{mainLBMode} ** NOT ROUND-ROBIN **\n";
+                    print "$name - $aType - Datacenter: $datacenter - Answer: @ipRes - LB Mode: $wips{$aType}{wips}{$name}{mainLBMode} ** NOT ROUND-ROBIN **\n";
                 } else {
-                    print "$name - $aType - Datacenter: $ips{$ipRes[0]}{datacenter} - Answer: @ipRes - BAD-ANSWER - $wips{$aType}{wips}{$name}{mainLBMode}\n";
+                    print "$name - $aType - Datacenter: $datacenter - Answer: @ipRes - BAD-ANSWER - $wips{$aType}{wips}{$name}{mainLBMode}\n";
                 }
             }
             if ($verboseLvl == 1 ) {
@@ -256,15 +260,15 @@ sub showResults {
             # method is round-robin - check if response is an acceptable IP
             if (grep {$_ eq $ipRes[0]} @ip){
                 if ($verboseLvl >= 1 ) {
-                    print "$name - $aType - Datacenter: $ips{$ipRes[0]}{datacenter} - Answer: @ipRes - Good Answer - LB Mode: $wips{$aType}{wips}{$name}{mainLBMode} ** ROUND-ROBIN RESPONSE **\n";                    
+                    print "$name - $aType - Datacenter: $datacenter - Answer: @ipRes - Good Answer - LB Mode: $wips{$aType}{wips}{$name}{mainLBMode} ** ROUND-ROBIN RESPONSE **\n";                    
                 } else {
-                    print "$name - $aType - Datacenter: $ips{$ipRes[0]}{datacenter} - Good-answer - $wips{$aType}{wips}{$name}{mainLBMode}\n";                    
+                    print "$name - $aType - Datacenter: $datacenter - Good-answer - $wips{$aType}{wips}{$name}{mainLBMode}\n";                    
                 }
             } else {
                 if ($verboseLvl >= 1 ) {
-                    print "$name - $aType - Datacenter: $ips{$ipRes[0]}{datacenter} - Answer: @ipRes - ** BAD ANSWER **\n";                    
+                    print "$name - $aType - Datacenter: $datacenter - Answer: @ipRes - ** BAD ANSWER **\n";                    
                 } else {
-                    print "$name - $aType - Datacenter: $ips{$ipRes[0]}{datacenter} - Answer: @ipRes - BAD-ANSWER\n";             
+                    print "$name - $aType - Datacenter: $datacenter - Answer: @ipRes - BAD-ANSWER\n";             
                 }
             }
             if ($verboseLvl == 1 ) {
