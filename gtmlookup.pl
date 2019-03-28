@@ -114,12 +114,18 @@ sub getGTMConfig {
                 $vses{$server}{datacenter} = $datacenter;
             }
             if (/ virtual\-servers \{/ .. /^}/) {
-                if ( /\s+(.*) \{/) {
+                if ( /\s+(.*) \{$/ && !(/depends-on/)) {
                     $vs = $1;
                     $vs =~ s/^\s+//;
                     $vs =~ s/\s+$//;
                 }
                 if (/ destination (\d*\.\d*\.\d*\.\d*):/) {
+                    $vses{$server}{vses}{$vs}{ip} = $1;
+                    my $ip = $1;
+                    $ips{$ip}{ip} = $1;
+                    $ips{$ip}{datacenter} = $vses{$server}{datacenter};
+                # if no match for ipv4 address, try this to match an ipv6 address
+                } elsif (/ destination (.*)\./) {
                     $vses{$server}{vses}{$vs}{ip} = $1;
                     my $ip = $1;
                     $ips{$ip}{ip} = $1;
@@ -217,8 +223,10 @@ sub dig_address {
 sub showResults {
     (@ip) = @_;
     my $datacenter = "undefined";
-    if ($ips{$ipRes[0]}{datacenter}) {
-        $datacenter = $ips{$ipRes[0]}{datacenter}
+    if (@ipRes) {
+        if ($ips{$ipRes[0]}{datacenter}) {
+            $datacenter = $ips{$ipRes[0]}{datacenter}
+        }
     }
     if ( scalar @ipRes >= 2) {
         # multiple answer IPs in response
