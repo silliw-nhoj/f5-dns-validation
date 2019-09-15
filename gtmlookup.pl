@@ -18,7 +18,6 @@
 # 	Name Server: the name server to query
 # 	Verbosity Level: none=normal 1=verbose 2=debug
 # 	Example: ./gtmlookup.pl GTM-config.cfg 10.10.100.252 2
-#
 
 use strict;
 use warnings;
@@ -113,24 +112,18 @@ sub getGTMConfig {
                 my $datacenter = $1;
                 $vses{$server}{datacenter} = $datacenter;
             }
-            if (/ virtual\-servers \{/ .. /^}/) {
-                if ( /\s+(.*) \{$/ && !(/depends-on/)) {
+            if (/^\s{4}virtual\-servers \{/ .. /^}/) {
+                if ( /^\s{8}(.*) \{$/ && !(/depends-on/)) {
                     $vs = $1;
                     $vs =~ s/^\s+//;
                     $vs =~ s/\s+$//;
                 }
-                if (/ destination (\d*\.\d*\.\d*\.\d*):/) {
+                if (/ destination (\d*\.\d*\.\d*\.\d*):/ || / destination (([a-fA-F0-9]{1,4}(:{1,2}|))+)\./) {
                     $vses{$server}{vses}{$vs}{ip} = $1;
                     my $ip = $1;
                     $ips{$ip}{ip} = $1;
                     $ips{$ip}{datacenter} = $vses{$server}{datacenter};
-                # if no match for ipv4 address, try this to match an ipv6 address
-                } elsif (/ destination (.*)\./) {
-                    $vses{$server}{vses}{$vs}{ip} = $1;
-                    my $ip = $1;
-                    $ips{$ip}{ip} = $1;
-                    $ips{$ip}{datacenter} = $vses{$server}{datacenter};
-                }
+                } 
             }
         }
 
