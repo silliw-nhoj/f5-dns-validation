@@ -88,7 +88,7 @@ sub getGTMConfig {
                 $memberVS = $3;
                 $server =~ s/^\s+//;
                 $server =~ s/\s+$//;
-                $memberVS =~ s/\/Common\///;
+                #$memberVS =~ s/\/Common\///;
                 $pools{$type}{pools}{$pool}{members}{$member}{state} = "enabled";
                 $pools{$type}{pools}{$pool}{members}{$member}{server} = $server;
                 $pools{$type}{pools}{$pool}{members}{$member}{memberVS} = $memberVS;
@@ -117,10 +117,12 @@ sub getGTMConfig {
                     $vs = $1;
                     $vs =~ s/^\s+//;
                     $vs =~ s/\s+$//;
+                    #$vs =~ s/\/Common\///;
                 }
-                if (/ destination (\d*\.\d*\.\d*\.\d*):/ || / destination (([a-fA-F0-9]{1,4}(:{1,2}|))+)\./) {
+                if (/ destination ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+):/ || / destination (([a-fA-F0-9]{1,4}(:{1,2}|))+)\./) {
                     $vses{$server}{vses}{$vs}{ip} = $1;
                     my $ip = $1;
+                    #print "## $server - $vs - $vses{$server}{vses}{$vs}{ip}\n";
                     $ips{$ip}{ip} = $1;
                     $ips{$ip}{datacenter} = $vses{$server}{datacenter};
                 } 
@@ -133,7 +135,7 @@ sub getGTMConfig {
                 $type = "a" if ($type eq "");
                 $wideip = $2;
                 $type =~ s/\s//;
-                $wideip =~ s/\/Common\///;
+                #$wideip =~ s/\/Common\///;
                 $wips{$type}{wips}{$wideip}{name} = $wideip;
                 $wips{$type}{wips}{$wideip}{lbMode} = "round-robin";
                 @{$wips{$type}{wips}{$wideip}{ips}} = ();
@@ -202,6 +204,7 @@ sub assembleGTMObjects {
 sub dig_address {
     my @digRes =();
     my ($wip) = @_;
+    $wip =~ s/\/Common\///;
 
     if ($dnsServer) {
         $digResult = `dig $aType $wip\. \@$dnsServer | awk '/;; ANSWER SECTION:/,/\^\$/ {if (\$0 ~ /IN[[:space:]]A/) print \$NF}'`;        
